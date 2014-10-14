@@ -2,7 +2,7 @@ include .knightos/variables.make
 
 INIT=/bin/fileman
 
-ALL_TARGETS:=$(LIB)core $(ETC)magic $(ETC)extensions
+ALL_TARGETS:=$(LIB)core $(ETC)magic $(ETC)extensions $(INCLDUE)corelib.inc
 
 $(LIB)core: main.asm
 	mkdir -p $(LIB)
@@ -15,5 +15,9 @@ $(ETC)magic:
 $(ETC)extensions: config/extensions
 	mkdir -p $(ETC)
 	cp config/extensions $(ETC)
+
+$(INCLUDE)corelib.inc: corelib.inc
+	mkdir -p $(INCLUDE)
+	cp corelib.inc $(INCLUDE)
 
 include .knightos/sdk.make
