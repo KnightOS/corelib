@@ -1,36 +1,19 @@
-OUTDIR:=bin/
-LIBDIR:=$(OUTDIR)lib/
-INCDIR:=$(OUTDIR)include/
-ETCDIR:=$(OUTDIR)etc/
+include .knightos/variables.make
 
-all: package
-	
-package: $(LIBDIR)core $(INCDIR)corelib.inc $(ETCDIR)extensions $(ETCDIR)magic
-	kpack corelib-0.1.0.pkg $(OUTDIR)
+INIT=/bin/fileman
 
-$(LIBDIR)core: corelib.asm characters.asm errors.asm
-	mkdir -p $(LIBDIR)
-	$(AS) $(ASFLAGS) --define "$(PLATFORM)" --include "$(INCLUDE);$(PACKAGEPATH)/corelib/" corelib.asm $(LIBDIR)core
+ALL_TARGETS:=$(LIB)core $(ETC)magic $(ETC)extensions
 
-$(INCDIR)corelib.inc:
-	mkdir -p $(INCDIR)
-	cp corelib.inc $(INCDIR)corelib.inc
+$(LIB)core: main.asm
+	mkdir -p $(LIB)
+	$(AS) $(ASFLAGS) --listing $(OUT)main.list main.asm $(LIB)core
 
-$(ETCDIR)extensions:
-	# This would just be an empty file by default, but we're testing things
-	mkdir -p $(ETCDIR)
-	cp extensions $(ETCDIR)extensions
+$(ETC)magic:
+	mkdir -p $(ETC)
+	touch $(ETC)magic # This is an empty file for the time being
 
-$(ETCDIR)magic:
-	# This is just an empty file by default
-	mkdir -p $(ETCDIR)
-	touch $(ETCDIR)magic
+$(ETC)extensions: config/extensions
+	mkdir -p $(ETC)
+	cp config/extensions $(ETC)
 
-clean:
-	rm -rf $(OUTDIR)
-	rm -rf corelib-0.1.0.pkg
-
-install: package
-	kpack -e -s corelib-0.1.0.pkg $(PREFIX)
-
-.PHONY: all clean
+include .knightos/sdk.make
