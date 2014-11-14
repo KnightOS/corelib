@@ -17,7 +17,7 @@ $(ETC)extensions: config/extensions
 	cp config/extensions $(ETC)
 
 $(INC)corelib.inc: corelib.inc
-	mkdir -p $(INCLUDE)
-	cp corelib.inc $(INCLUDE)
+	mkdir -p $(INC)
+	cp corelib.inc $(INC)
 
 include .knightos/sdk.make
