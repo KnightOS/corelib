@@ -535,10 +535,12 @@ open:
         pcall(malloc)
         jr nz, .fail
         push ix \ pop de
-        ldir
+        push de
+            ldir
+        pop hl
 
         ; Launch the text editor
-        kld(de, editorPath)
+        ild(de, editorPath)
         pcall(launchProgram)
         ld (kernelGarbage), a
         jr nz, .fail
@@ -585,9 +587,9 @@ open_returnPoint:
 #include "characters.asm"
 
 castlePath:
-    .db "/bin/castle", 0
+    .db "/bin/launcher", 0
 threadlistPath:
-    .db "/bin/threadlist", 0
+    .db "/bin/switcher", 0
 magicPath:
     .db "/etc/magic", 0
 extensionsPath:
