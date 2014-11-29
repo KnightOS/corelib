@@ -537,30 +537,8 @@ open:
         push ix \ pop de
         ldir
 
-        push ix
-            ; Read the editor executable from /etc/editor
-            ild(de, editorPath)
-            pcall(openFileRead)
-            jr nz, .notKEXCfail
-            
-            ; Get the size of the file contents and allocate memory for it
-            pcall(getStreamInfo)
-            jr nz, .fail
-            inc bc
-            pcall(malloc)
-            jr nz, .fail
-            dec bc
-            push ix
-                add ix, bc
-                ld (ix), 0
-            pop ix
-
-            pcall(streamReadBuffer)
-            jr nz, .fail
-            pcall(closeStream)
-        push ix \ pop de \ pop hl
-
         ; Launch the text editor
+        kld(de, editorPath)
         pcall(launchProgram)
         ld (kernelGarbage), a
         jr nz, .fail
@@ -615,7 +593,7 @@ magicPath:
 extensionsPath:
     .db "/etc/extensions", 0
 editorPath:
-    .db "/etc/editor", 0
+    .db "/bin/editor", 0
 
 kexcString:
     .db "KEXC", 0
