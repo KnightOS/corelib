@@ -299,7 +299,7 @@ _:                      pcall(flushKeys)
 ;;  Gets a key input from the user.
 ;; Outputs:
 ;;  A: ANSI character
-;;  B: raw keypress
+;;  B: Raw keypress
 ;; Notes:
 ;;  Uses the upper-right hand corner of the screen to display
 ;;  input information, assumes you have a window chrome prepared.
@@ -310,6 +310,7 @@ getCharacterInput:
 
     ld b, 0
     icall(appGetKey)
+    jr nz, .lostFocus
     or a
     ret z ; Return if zero
 
@@ -349,6 +350,11 @@ getCharacterInput:
 
 _:  xor a
     pop bc
+    cp a
+    ret
+.lostFocus:
+    or 1
+    ld a, 0
     ret
 
 setCharSetFromKey:
