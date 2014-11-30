@@ -336,7 +336,7 @@ showMenu:
         icall(.drawIndicator)
         jr .input_loop
 .confirm:
-        ld a, b
+        ld a, c
     pop hl
     pop bc
     pop de
