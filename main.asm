@@ -175,6 +175,18 @@ drawScrollBar:
     pop af
     ret
 
+drawOverlay:
+    ld e, 0
+    ld l, 16
+    ld bc, (49 - 15) * 256 + 96
+    pcall(rectOR)
+
+    ld e, 0
+    ld l, 17
+    ld bc, (48 - 16) * 256 + 96
+    pcall(rectXOR)
+    ret
+
 ;; showMessage [corelib]
 ;;  Displays a message box on the screen buffer.
 ;; Inputs:
@@ -195,15 +207,7 @@ showMessage:
         push de
             push hl
                 push bc
-                    ld e, 0
-                    ld l, 16
-                    ld bc, (49 - 15) * 256 + 96
-                    pcall(rectOR)
-
-                    ld e, 0
-                    ld l, 17
-                    ld bc, (48 - 16) * 256 + 96
-                    pcall(rectXOR)
+                    icall(drawOverlay)
 
                     ; Draw our nice icon. Note, in the future it might be nice to have a table of
                     ; different icons and then do something like
