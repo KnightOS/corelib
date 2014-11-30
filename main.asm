@@ -195,14 +195,14 @@ showMessage:
         push de
             push hl
                 push bc
-                    ld e, 18
+                    ld e, 0
                     ld l, 16
-                    ld bc, (49 - 15) * 256 + (78 - 17)
+                    ld bc, (49 - 15) * 256 + 96
                     pcall(rectOR)
 
-                    ld e, 19
+                    ld e, 0
                     ld l, 17
-                    ld bc, (48 - 16) * 256 + (77 - 18)
+                    ld bc, (48 - 16) * 256 + 96
                     pcall(rectXOR)
 
                     ; Draw our nice icon. Note, in the future it might be nice to have a table of
@@ -215,7 +215,7 @@ showMessage:
                     jr nz, .skipIcon
 
                     ld b, 8
-                    ld de, 20 * 256 + 18
+                    ld de, 10 * 256 + 18
                     ild(hl, exclamationSprite1)
                     pcall(putSpriteOR)
                     ld e, 26
@@ -225,12 +225,13 @@ showMessage:
         pop bc \ pop hl \ pop de \ pop af \ push hl \ push bc \ push af \ push de
                     ; For now we'll hardcode the location of the text, but if wider icons get
                     ; implemented the text's X coordinate needs to be calculated (or pre-stored).
-                    ld de, 26 * 256 + 18 ; d = 26, e = 18
-                    ld b, d ; margin
-                    pcall(drawStr)
+                    ld de, 16 * 256 + 18 ; d = 26, e = 18 (coords)
+                    ld bc, (96 - 16) * 256 + 37 ; margins
+                    ld a, d ; margin
+                    pcall(wrapStr)
 
                     ; Draw all the options
-                    ld de, 24 * 256 + 37
+                    ld de, 16 * 256 + 37
                     ld b, d ; left margin
                 pop hl \ pop af \ push hl \ push af ; need the address of options, originally in de
                 ld c, (hl)
@@ -254,7 +255,7 @@ _:              ld b, 5 ; height of sprite
 .answerloop:
                     push af
                         or a \ rlca \ ld d, a \ rlca \ add d ; A *= 6
-                        ld d, 0x14
+                        ld d, 12
                         add a, 37 \ ld e, a
                     pop af
                     ; Draw!
