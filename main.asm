@@ -621,7 +621,7 @@ getCharacterInput:
         push af
             ild(a, (charSet))
             add a, a \ add a, a \ add a, a \ ld b, a \ add a, a \ add a, a \ add a, b ; A * 40
-            ild(hl, characterMapUppercase)
+            ild(hl, characterMapLowercase)
             add a, l
             ld l, a
             jr nc, $+3 \ inc h
@@ -936,17 +936,17 @@ clearCharSetSprite:
     .db 0b11100000
 charSetSprites:
 
-uppercaseASprite:
-    .db 0b01000000
-    .db 0b10100000
-    .db 0b11100000
-    .db 0b10100000
-
 lowercaseASprite:
     .db 0b00000000
     .db 0b01100000
     .db 0b10100000
     .db 0b01100000
+
+uppercaseASprite:
+    .db 0b01000000
+    .db 0b10100000
+    .db 0b11100000
+    .db 0b10100000
 
 symbolSprite:
     .db 0b01000000
