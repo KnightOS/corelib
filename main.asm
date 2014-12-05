@@ -231,7 +231,6 @@ promptString:
         ; Initialize variables
         xor a
         ild((.caret_state), a)
-        inc a
         icall(setCharSet)
         ld a, 3
         ild((.caret_x), a)
