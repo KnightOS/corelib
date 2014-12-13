@@ -4,9 +4,9 @@ INIT=/bin/fileman
 
 ALL_TARGETS:=$(LIB)core $(INC)corelib.inc
 
-$(LIB)core: main.asm
+$(LIB)core: src/*.asm
 	mkdir -p $(LIB)
-	$(AS) $(ASFLAGS) --listing $(OUT)main.list main.asm $(LIB)core
+	$(AS) $(ASFLAGS) --listing $(OUT)header.list src/header.asm $(LIB)core
 
 $(INC)corelib.inc: corelib.inc
 	mkdir -p $(INC)
