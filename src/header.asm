@@ -31,6 +31,7 @@ jumpTable:
     jp drawScrollBar
     jp promptString
     jp showMenu
+    jp wordWrap
     .db 0xFF
 
 #include "src/open.asm"
@@ -40,3 +41,4 @@ jumpTable:
 #include "src/showMenu.asm"
 #include "src/showMessage.asm"
 #include "src/util.asm"
+#include "src/text.asm"

@@ -23,6 +23,7 @@ open .equ 42
 drawScrollBar .equ 45
 promptString .equ 48
 showMenu .equ 51
+wordWrap .equ 54
 
 ; Character sets
 charSetUppercase .equ 0
