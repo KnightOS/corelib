@@ -53,6 +53,7 @@ _:      ; If char is a newline, print line and move to next line
         push bc
             push ix \ pop bc
             icall(printRange)
+            inc ix
             jr .nextLine
 
 _:      ; If char is whitespace, record its position
