@@ -10,7 +10,7 @@
 ;;  D, E: Advanced to position of the end of the string
 ;;  HL: Pointer to null terminator or next character that would have been drawn if the string hadn't run off-screen.
 ;; Notes:
-;;  The left margin is only required if your string contains newlines or carriage returns.
+;;  This function destroys shadow registers.
 wordWrap:
     push af
     push ix
