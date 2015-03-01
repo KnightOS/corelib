@@ -11,27 +11,31 @@ drawOverlay:
     ret
 
 launchCastle:
-    pcall(fullScreenWindow)
-    push de
-        ild(de, castlePath)
-        di
-        pcall(launchProgram)
-    pop de
-    pcall(suspendCurrentThread)
-    pcall(flushKeys)
-    or 1
+    push af
+        pcall(fullScreenWindow)
+        push de
+            ild(de, castlePath)
+            di
+            pcall(launchProgram)
+        pop de
+        pcall(suspendCurrentThread)
+        pcall(flushKeys)
+    pop af
+    or a
     ret
 
 launchThreadList:
-    pcall(fullScreenWindow)
-    push de
-        ild(de, threadListPath)
-        di
-        pcall(launchProgram)
-    pop de
-    pcall(suspendCurrentThread)
-    pcall(flushKeys)
-    or 1
+    push af
+        pcall(fullScreenWindow)
+        push de
+            ild(de, threadListPath)
+            di
+            pcall(launchProgram)
+        pop de
+        pcall(suspendCurrentThread)
+        pcall(flushKeys)
+    pop af
+    or a
     ret
 
 castlePath:
