@@ -97,7 +97,34 @@ showMenu:
         jr z, .confirm
         cp k2nd
         jr z, .confirm
+        push bc
+        push hl
+            ld b, a
+            ild(hl, .numeric_input_keys)
+            pcall(strchr)
+            jr z, .handle_numeric_selection
+        pop hl
+        pop bc
         jr .input_loop
+.handle_numeric_selection:
+            ild(bc, .numeric_input_keys)
+            scf \ ccf
+            sbc hl, bc
+            ld a, l
+        pop hl
+        pop bc
+    pop hl \ push hl
+        push bc
+            ld c, (hl)
+            cp c
+        pop bc
+        jr z, .input_loop
+        jr nc, .input_loop
+    pop hl
+    pop bc
+    pop de
+    inc sp \ inc sp ; pop af
+    ret
 .down:
     pop hl \ push hl
         ld a, (hl)
@@ -141,5 +168,7 @@ showMenu:
             pcall(putSpriteXOR)
         pop de
         ret
+.numeric_input_keys:
+    .db k1, k2, k3, k4, k5, k6, k7, k8, k9, 0
 
 #include "src/errors.asm"
