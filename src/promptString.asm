@@ -51,26 +51,94 @@ promptString:
         ld a, b
         cp kMODE
         ijp(z, .cancel)
+        cp kLeft
+        jr z, .left
+        cp kRight
+        jr z, .right
+        jr .input_loop
+.left:
+        pcall(flushKeys)
+
+        ild(bc, (.start_address))
+        push ix \ pop hl
+        pcall(cpHLBC)
+        jr z, .input_loop
+
+        icall(.erase_caret)
+        ld a, (ix + -1)
+        pcall(measureChar)
+        neg
+        ild(hl, .caret_x)
+        add (hl)
+        ild((.caret_x), a)
+
+        dec ix
+        jr .input_loop
+.right:
+        pcall(flushKeys)
+
+        icall(.erase_caret)
+        ld a, (ix)
+        or a
+        jr z, .input_loop
+        pcall(measureChar)
+        ild(hl, .caret_x)
+        add (hl)
+        ild((.caret_x), a)
+
+        inc ix
         jr .input_loop
 
 .insert_character:
         pcall(flushKeys)
         ; Handle character
         icall(.erase_caret)
-        ; TODO: Seeking
         cp '\b'
-        jr z, .handle_bksp
+        ijp(z, .handle_bksp)
 
         ild(hl, (.current_length))
         ild(bc, (.max_length))
         pcall(cpHLBC)
-        jr z, .input_loop
+        ijp(z, .input_loop)
         inc hl
         ild((.current_length), hl)
 
-        ld (ix), a
-        inc ix
-        ld (ix), 0
+        ; Insert character
+        push ix \ pop hl
+        ild(bc, (.start_address))
+        scf \ ccf
+        sbc hl, bc
+        ld b, h \ ld c, l
+        ild(hl, (.current_length))
+        dec hl
+        scf \ ccf
+        sbc hl, bc
+        ld b, h \ ld c, l
+        ld hl, 0
+        pcall(cpHLBC)
+        jr z, _ ; Skip if no need to shift
+
+        ild(hl, (.start_address))
+        ild(de, (.current_length))
+        add hl, de
+        ex de, hl
+        scf \ ccf
+        sbc hl, bc
+        ex de, hl
+        ld d, h \ ld e, l \ dec de
+        inc bc
+        ex de, hl
+        lddr
+
+_:      push af
+            ld b, (ix)
+            ld (ix), a
+            inc ix
+            xor a
+            cp b
+            jr nz, _
+            ld (ix), 0
+_:      pop af
 
         ; Advance caret
         pcall(measureChar)
@@ -81,14 +149,14 @@ promptString:
         jr z, .do_scroll_left
         jr nc, .do_scroll_left
         ld (hl), a
-        jr .input_loop
+        ijp(.input_loop)
 .do_scroll_left:
         ld a, (ix + -1)
         pcall(measureChar)
         ild(hl, .left_offset)
         add a, (hl)
         ld (hl), a
-        jr .input_loop
+        ijp(.input_loop)
 .handle_bksp:
         ild(hl, (.start_address))
         push ix \ pop bc
@@ -98,11 +166,6 @@ promptString:
 
         dec ix
         ld a, (ix)
-        ld (ix), 0
-
-        ild(hl, (.current_length))
-        dec hl
-        ild((.current_length), hl)
 
         pcall(measureChar)
         ild(hl, .caret_x)
@@ -111,7 +174,23 @@ promptString:
         add a, d
         ld (hl), a
 
-        icall(.draw_input_area)
+        ild(hl, (.current_length))
+        dec hl
+        ild((.current_length), hl)
+
+        push ix \ pop hl
+        ld d, h \ ld e, l
+        inc hl
+        push hl
+            ild(bc, (.start_address))
+            push ix \ pop hl
+            scf \ ccf
+            sbc hl, bc
+            ild(bc, (.current_length))
+            add hl, bc
+            ld b, h \ ld c, l
+        pop hl
+        ldir
 
         ijp(.input_loop)
 .accept:
