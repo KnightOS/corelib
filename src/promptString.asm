@@ -19,7 +19,7 @@ promptString:
     push hl
         icall(drawOverlay)
         ; Draw text
-    pop hl \ push hl
+    pop hl \ pop bc \ push bc \ push hl
         ld de, 0x0112
         pcall(drawStr)
         ild(hl, promptText)
@@ -57,11 +57,17 @@ promptString:
         pcall(flushKeys)
         ; Handle character
         icall(.erase_caret)
-        ; TODO: Checks on length
         ; TODO: Scrolling
         ; TODO: Seeking
         cp '\b'
         jr z, .handle_bksp
+
+        ild(hl, (.current_length))
+        ild(bc, (.max_length))
+        pcall(cpHLBC)
+        jr z, .input_loop
+        inc hl
+        ild((.current_length), hl)
 
         ld (ix), a
         inc ix
@@ -96,7 +102,7 @@ promptString:
 
         icall(.draw_input_area)
 
-        jr .input_loop
+        ijp(.input_loop)
 .accept:
     pcall(flushKeys)
     pop hl
