@@ -2,7 +2,9 @@ characterMapLowercase:
     ; $9 = Enter
     .db '\n', '"', 'w', 'r', 'm', 'h', 0x08, 0
     ; Theta
-    .db '?', 0, 'v', 'q', 'l', 'g', 0, 0 .db ':', 'z', 'u', 'p', 'k', 'f', 'c', 0 .db ' ', 'y', 't', 'o', 'j', 'e', 'b', 'x'
+    .db '?', 0, 'v', 'q', 'l', 'g', 0, 0 
+    .db ':', 'z', 'u', 'p', 'k', 'f', 'c', 0 
+    .db ' ', 'y', 't', 'o', 'j', 'e', 'b', 'x'
     ; ON
     .db 0, 'x', 's', 'n', 'i', 'd', 'a', 0
 
