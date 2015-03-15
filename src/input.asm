@@ -142,7 +142,7 @@ charSet:
 ; Sets the character mapping to A.
 ; 0: uppercase \ 1: lowercase \ 2: symbols \ 3: extended
 setCharSet:
-    cp 4
+    cp 5
     ret nc ; Only allow 0-3
     ild((charSet), a)
     ret

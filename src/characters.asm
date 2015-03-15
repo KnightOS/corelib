@@ -2,9 +2,7 @@ characterMapLowercase:
     ; $9 = Enter
     .db '\n', '"', 'w', 'r', 'm', 'h', 0x08, 0
     ; Theta
-    .db '?', 0, 'v', 'q', 'l', 'g', 0, 0
-    .db ':', 'z', 'u', 'p', 'k', 'f', 'c', 0
-    .db ' ', 'y', 't', 'o', 'j', 'e', 'b', 'x'
+    .db '?', 0, 'v', 'q', 'l', 'g', 0, 0 .db ':', 'z', 'u', 'p', 'k', 'f', 'c', 0 .db ' ', 'y', 't', 'o', 'j', 'e', 'b', 'x'
     ; ON
     .db 0, 'x', 's', 'n', 'i', 'd', 'a', 0
 
@@ -33,3 +31,11 @@ characterMapExtended:
     .db 'i', '2', '5', '8', '{', '<', '|', 0
     .db '0', '1', '4', '7', ';', '=', 0, 0
     .db 0, '&', '%', '$', '#', '@', '!', 0
+
+characterMapHexadecimal:
+    ; $9 = Enter
+    .db '\n', 0, 0, 0, 0, 0, 0x08, 0 ; 0x08 is Backspace, which is mapped to CLEAR
+    .db 0, '3', '6', '9', 0, 0, 0, 0
+    .db 0, '2', '5', '8', 0, 'F', 'C', 0
+    .db 0, '1', '4', '7', 0, 'E', 'B', 0
+    .db 0, 0, 0, 0, 0, 'D', 'A', 0

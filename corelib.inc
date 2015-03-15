@@ -30,3 +30,4 @@ charSetUppercase .equ 0
 charSetLowercase .equ 1
 charSetSymbol .equ 2
 charSetExtended .equ 3
+charSetHex .equ 4
