@@ -172,6 +172,12 @@ extendedSprite:
     .db 0b00000000
     .db 0b01000000
 
+hexSprite:
+    .db 0b10100000
+    .db 0b01000000
+    .db 0b01000000
+    .db 0b10100000
+
 exclamationSprite1:
     .db 0b01110000
     .db 0b10001000
