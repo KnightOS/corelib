@@ -35,29 +35,28 @@ promptString:
         ild((.current_length), bc)
         add ix, bc
         pcall(measureStr)
-        add a, 3
+        add a, 2
         ild((.caret_x), a)
 
-        icall(.draw_input_area)
         pcall(flushKeys)
 .input_loop:
+        icall(.draw_input_area)
         icall(.draw_caret)
         pcall(fastCopy)
         icall(getCharacterInput)
         cp '\n'
-        jr z, .accept
+        ijp(z, .accept)
         or a
         jr nz, .insert_character
         ld a, b
         cp kMODE
-        jr z, .cancel
+        ijp(z, .cancel)
         jr .input_loop
 
 .insert_character:
         pcall(flushKeys)
         ; Handle character
         icall(.erase_caret)
-        ; TODO: Scrolling
         ; TODO: Seeking
         cp '\b'
         jr z, .handle_bksp
@@ -72,26 +71,38 @@ promptString:
         ld (ix), a
         inc ix
         ld (ix), 0
-        icall(.draw_input_area)
 
         ; Advance caret
         pcall(measureChar)
         ild(hl, .caret_x)
         ld d, (hl)
         add a, d
+        cp 94
+        jr z, .do_scroll_left
+        jr nc, .do_scroll_left
         ld (hl), a
-
+        jr .input_loop
+.do_scroll_left:
+        ld a, (ix + -1)
+        pcall(measureChar)
+        ild(hl, .left_offset)
+        add a, (hl)
+        ld (hl), a
         jr .input_loop
 .handle_bksp:
         ild(hl, (.start_address))
         push ix \ pop bc
         scf \ ccf
         sbc hl, bc
-        jr z, .input_loop
+        ijp(z, .input_loop)
 
         dec ix
         ld a, (ix)
         ld (ix), 0
+
+        ild(hl, (.current_length))
+        dec hl
+        ild((.current_length), hl)
 
         pcall(measureChar)
         ild(hl, .caret_x)
@@ -148,6 +159,11 @@ promptString:
     push hl
     push de
     push af
+        ld e, 0
+        ld l, 24
+        ld bc, 9 * 256 + 96
+        pcall(rectAND)
+
         ld e, 1
         ld l, 24
         ld bc, 9 * 256 + 94
@@ -162,7 +178,25 @@ promptString:
         ld e, 26
         ld d, 3
         ild(hl, (.start_address))
-        pcall(drawStr)
+        ild(a, (.left_offset))
+        neg
+        add a, d \ ld d, a
+.input_area_loop:
+        ld a, d
+        cp 0x80
+        jr c, _
+        ld a, (hl)
+        inc hl
+        pcall(measureChar)
+        add a, d
+        ld d, a
+        jr .input_area_loop
+_:      pcall(drawStr)
+
+        ld e, 0
+        ld l, 24
+        ld bc, 9 * 256 + 1
+        pcall(rectAND)
     pop af
     pop de
     pop hl
@@ -178,3 +212,5 @@ promptString:
     .dw 0
 .start_address:
     .dw 0
+.left_offset:
+    .db 0
