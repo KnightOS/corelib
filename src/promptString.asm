@@ -13,6 +13,7 @@
 ;;  
 ;;  You must re-draw your UI after calling this.
 promptString:
+    ild(ix, testStr)
     push ix
     push de
     push bc
@@ -25,28 +26,20 @@ promptString:
         ild(hl, promptText)
         ld de, 0x012B
         pcall(drawStr)
-        ; Draw input area
-        push bc
-            ld e, 1
-            ld l, 24
-            ld bc, 9 * 256 + 94
-            pcall(rectOR)
-
-            ld e, 2
-            ld l, 25
-            ld bc, 7 * 256 + 92
-            pcall(rectXOR)
-        pop bc
         ; Initialize variables
         xor a
         ild((.caret_state), a)
-        ld a, 3
-        ild((.caret_x), a)
         ild((.max_length), bc)
         ild((.start_address), ix)
         push ix \ pop hl
         pcall(strlen)
         ild((.current_length), bc)
+        add ix, bc
+        pcall(measureStr)
+        add a, 3
+        ild((.caret_x), a)
+
+        icall(.draw_input_area)
         pcall(flushKeys)
 .input_loop:
         icall(.draw_caret)
@@ -60,23 +53,30 @@ promptString:
         cp kMODE
         jr z, .cancel
         jr .input_loop
+
 .insert_character:
         icall(.erase_caret)
         ; Handle character
+        ; TODO: Backspace
         ; TODO: Checks on length
         ; TODO: Scrolling
-        ; TODO: Backspace
         ; TODO: Seeking
         ld (ix), a
         inc ix
         ld (ix), 0
-        ld e, 26
+        icall(.draw_input_area)
+
+        ; Advance caret
+        pcall(measureChar)
         ild(hl, .caret_x)
         ld d, (hl)
-        pcall(drawChar)
-        ld (hl), d
+        add a, d
+        ld (hl), a
+
         pcall(flushKeys)
+
         jr .input_loop
+.handle_backspace:
 .accept:
     pcall(flushKeys)
     pop hl
@@ -115,6 +115,32 @@ promptString:
         ild(hl, textCaret)
         pcall(putSpriteAND)
     pop af
+    ret
+.draw_input_area:
+    ; Draw input area
+    push bc
+    push hl
+    push de
+    push af
+        ld e, 1
+        ld l, 24
+        ld bc, 9 * 256 + 94
+        pcall(rectOR)
+
+        ld e, 2
+        ld l, 25
+        ld bc, 7 * 256 + 92
+        pcall(rectXOR)
+
+        ; Draw current value
+        ld e, 26
+        ld d, 3
+        ild(hl, (.start_address))
+        pcall(drawStr)
+    pop af
+    pop de
+    pop hl
+    pop bc
     ret
 .caret_state:
     .db 0
