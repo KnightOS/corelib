@@ -13,7 +13,6 @@
 ;;  
 ;;  You must re-draw your UI after calling this.
 promptString:
-    ild(ix, testStr)
     push ix
     push de
     push bc
@@ -55,12 +54,15 @@ promptString:
         jr .input_loop
 
 .insert_character:
-        icall(.erase_caret)
+        pcall(flushKeys)
         ; Handle character
-        ; TODO: Backspace
+        icall(.erase_caret)
         ; TODO: Checks on length
         ; TODO: Scrolling
         ; TODO: Seeking
+        cp '\b'
+        jr z, .handle_bksp
+
         ld (ix), a
         inc ix
         ld (ix), 0
@@ -73,10 +75,28 @@ promptString:
         add a, d
         ld (hl), a
 
-        pcall(flushKeys)
+        jr .input_loop
+.handle_bksp:
+        ild(hl, (.start_address))
+        push ix \ pop bc
+        scf \ ccf
+        sbc hl, bc
+        jr z, .input_loop
+
+        dec ix
+        ld a, (ix)
+        ld (ix), 0
+
+        pcall(measureChar)
+        ild(hl, .caret_x)
+        ld d, (hl)
+        neg
+        add a, d
+        ld (hl), a
+
+        icall(.draw_input_area)
 
         jr .input_loop
-.handle_backspace:
 .accept:
     pcall(flushKeys)
     pop hl
