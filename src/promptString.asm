@@ -64,15 +64,20 @@ promptString:
         pcall(cpHLBC)
         jr z, .input_loop
 
+        dec ix
+
         icall(.erase_caret)
-        ld a, (ix + -1)
+        ld a, (ix)
         pcall(measureChar)
         neg
         ild(hl, .caret_x)
         add (hl)
+        cp 2
+        ijp(c, .do_scroll_right)
+        cp 0xF0
+        ijp(nc, .do_scroll_right)
         ild((.caret_x), a)
 
-        dec ix
         jr .input_loop
 .right:
         pcall(flushKeys)
@@ -81,13 +86,18 @@ promptString:
         ld a, (ix)
         or a
         jr z, .input_loop
+
+        inc ix
+
         pcall(measureChar)
         ild(hl, .caret_x)
         add (hl)
+        cp 94
+        ijp(z, .do_scroll_left)
+        ijp(nc, .do_scroll_left)
         ild((.caret_x), a)
 
-        inc ix
-        jr .input_loop
+        ijp(.input_loop)
 
 .insert_character:
         pcall(flushKeys)
@@ -157,6 +167,16 @@ _:      pop af
         add a, (hl)
         ld (hl), a
         ijp(.input_loop)
+.do_scroll_right:
+        ld b, a
+        ld a, 2
+        ild((.caret_x), a)
+        sub b
+        ild(hl, .left_offset)
+        neg
+        add a, (hl)
+        ld (hl), a
+        ijp(.input_loop)
 .handle_bksp:
         ild(hl, (.start_address))
         push ix \ pop bc
@@ -166,31 +186,36 @@ _:      pop af
 
         dec ix
         ld a, (ix)
+        push af
 
-        pcall(measureChar)
-        ild(hl, .caret_x)
-        ld d, (hl)
-        neg
-        add a, d
-        ld (hl), a
+            ild(hl, (.current_length))
+            dec hl
+            ild((.current_length), hl)
 
-        ild(hl, (.current_length))
-        dec hl
-        ild((.current_length), hl)
-
-        push ix \ pop hl
-        ld d, h \ ld e, l
-        inc hl
-        push hl
-            ild(bc, (.start_address))
             push ix \ pop hl
-            scf \ ccf
-            sbc hl, bc
-            ild(bc, (.current_length))
-            add hl, bc
-            ld b, h \ ld c, l
-        pop hl
-        ldir
+            ld d, h \ ld e, l
+            inc hl
+            push hl
+                ild(bc, (.start_address))
+                push ix \ pop hl
+                scf \ ccf
+                sbc hl, bc
+                ild(bc, (.current_length))
+                add hl, bc
+                ld b, h \ ld c, l
+            pop hl
+            ldir
+
+        pop af
+        pcall(measureChar)
+        neg
+        ild(hl, .caret_x)
+        add (hl)
+        cp 2
+        ijp(c, .do_scroll_right)
+        cp 0xF0
+        ijp(nc, .do_scroll_right)
+        ild((.caret_x), a)
 
         ijp(.input_loop)
 .accept:
@@ -273,6 +298,11 @@ _:      pop af
 _:      pcall(drawStr)
 
         ld e, 0
+        ld l, 24
+        ld bc, 9 * 256 + 1
+        pcall(rectAND)
+
+        ld e, 95
         ld l, 24
         ld bc, 9 * 256 + 1
         pcall(rectAND)
