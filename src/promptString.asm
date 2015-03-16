@@ -203,9 +203,14 @@ _:      pop af
                 ild(bc, (.current_length))
                 add hl, bc
                 ld b, h \ ld c, l
+                ld hl, 0
+                pcall(cpHLBC)
             pop hl
+            jr z, _
             ldir
-
+            jr ++_
+_:          ld (ix), 0
+_:
         pop af
         pcall(measureChar)
         neg
