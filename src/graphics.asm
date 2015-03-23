@@ -109,7 +109,7 @@ castleSprite:
 castleText:
     .db "Castle", 0
 promptText:
-    .db "Enter: Accept       MODE: Cancel", 0
+    .db "Enter:Accept MODE:Cancel", 0
 
 threadListSprite:
     .db 0b10111100

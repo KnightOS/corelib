@@ -20,10 +20,10 @@ promptString:
         icall(drawOverlay)
         ; Draw text
     pop hl \ pop bc \ push bc \ push hl
-        ld de, 0x0112
+        ld de, 0x0012
         pcall(drawStr)
         ild(hl, promptText)
-        ld de, 0x012B
+        ld de, 0x002B
         pcall(drawStr)
         ; Initialize variables
         xor a
