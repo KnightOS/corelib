@@ -1,6 +1,6 @@
 #ifndef _CORELIB_H
 #define _CORELIB_H
-#include <display.h>
+#include <knightos/display.h>
 
 #define _CORELIB_ID 0x02
 
