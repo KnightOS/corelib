@@ -6,7 +6,7 @@ ALL_TARGETS:=$(LIB)core $(SLIB)core $(INC)corelib.inc $(INC)corelib.h
 
 $(LIB)core: dependencies src/*.asm
 	mkdir -p $(LIB)
-	sass $(ASFLAGS) src/header.asm $(LIB)core
+	sass --include .knightos/include/ $(ASFLAGS) src/header.asm $(LIB)core
 
 $(SLIB)core: dependencies $(OUT)bindings.o
 	mkdir -p $(SLIB)

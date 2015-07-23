@@ -1,5 +1,5 @@
 #include "corelib.h"
-#include <display.h>
+#include <knightos/display.h>
 
 unsigned char app_get_key(unsigned char *lost_focus) __naked {
 	__asm
