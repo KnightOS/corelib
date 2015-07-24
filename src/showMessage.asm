@@ -35,7 +35,7 @@ showMessage:
                     jr nz, .skipIcon
 
                     ld b, 8
-                    ld de, 10 * 256 + 18
+                    ld de, 3 * 256 + 18
                     ild(hl, exclamationSprite1)
                     pcall(putSpriteOR)
                     ld e, 26
@@ -45,13 +45,13 @@ showMessage:
         pop bc \ pop hl \ pop de \ pop af \ push hl \ push bc \ push af \ push de
                     ; For now we'll hardcode the location of the text, but if wider icons get
                     ; implemented the text's X coordinate needs to be calculated (or pre-stored).
-                    ld de, 16 * 256 + 18 ; d = 26, e = 18 (coords)
-                    ld bc, (96 - 16) * 256 + 37 ; margins
+                    ld de, 11 * 256 + 18 ; d = 26, e = 18 (coords)
+                    ld bc, (96 - 0) * 256 + 37 ; margins
                     ld a, d ; margin
                     pcall(wrapStr)
 
                     ; Draw all the options
-                    ld de, 16 * 256 + 37
+                    ld de, 15 * 256 + 37
                     ld b, d ; left margin
                 pop hl \ pop af \ push hl \ push af ; need the address of options, originally in de
                 ld c, (hl)
@@ -75,7 +75,7 @@ _:              ld b, 5 ; height of sprite
 .answerloop:
                     push af
                         or a \ rlca \ ld d, a \ rlca \ add d ; A *= 6
-                        ld d, 12
+                        ld d, 11
                         add a, 37 \ ld e, a
                     pop af
                     ; Draw!
