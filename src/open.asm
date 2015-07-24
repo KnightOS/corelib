@@ -16,14 +16,17 @@ open:
         ; Check for KEXC
         push de
             pcall(openFileRead)
+            ild((error_code), a)
             ijp(nz, .isKEXCfail)
 
             ld bc, 5
             pcall(malloc)
+            ild((error_code), a)
             ijp(nz, .isKEXCfail)
 
             dec bc
             pcall(streamReadBuffer)
+            ild((error_code), a)
             ijp(nz, .isKEXCfail)
             pcall(closeStream)
 
@@ -37,7 +40,7 @@ open:
         ; If the file is a KEXC, directly launch it
         jr nz, .notKEXC
         pcall(launchProgram)
-        ld (kernelGarbage), a
+        ild((error_code), a)
         jr nz, .fail
         ild(hl, open_returnPoint)
         pcall(setReturnPoint)
@@ -60,7 +63,7 @@ open:
         ; Launch the text editor
         ild(de, editorPath)
         pcall(launchProgram)
-        ld (kernelGarbage), a
+        ld (error_code), a
         jr nz, .fail
 
         ; Tell the editor the path of the text file
@@ -82,7 +85,7 @@ open:
         ;jr .fail
 .fail:
     pop af
-    ld a, (kernelGarbage)
+    ild(a, (error_code))
     ijp(po, _)
     ei
 _:  or 1
@@ -90,7 +93,7 @@ _:  or 1
 
 .end:
     pop af
-    ld a, (kernelGarbage)
+    ild(a, (error_code))
     ijp(po, _)
     ei
 _:  cp a
@@ -109,3 +112,5 @@ editorPath:
     .db "/bin/editor", 0
 kexcString:
     .db "KEXC", 0
+error_code:
+    .db 0
