@@ -99,6 +99,129 @@ drawScrollBar:
     pop af
     ret
 
+;; drawTabs
+;;  Draws a tab bar at the top of the window
+;; Inputs:
+;;  A: Active tab
+;;  HL: Pointer to tabs descriptor
+;;  IY: Screen Buffer
+;; Notes:
+;;  The tabs descriptor is a list of zero deliminated strings preceded by the number of tabs. Example:
+;;
+;;  .db 4
+;;  .db "Info", 0
+;;  .db "Tasks", 0
+;;  .db "RAM", 0
+;;  .db "Flash", 0
+drawTabs:
+    push af
+    push bc
+    push de
+    push hl
+        ; Draw black bar
+        push hl
+            ld bc, 6 << 8 | 94
+            ld e, 1
+            ld l, 7
+            pcall(rectOR)
+        pop hl
+        ; B: tab counter
+        ; D: X position
+        ld b, (hl)
+        inc hl
+        ld d, 1
+        neg
+        add b
+.loop:
+        ; Current tab
+        cp b
+        jr nz, .allTabs
+        push af
+        push bc
+            ; If not first tab,
+            ; shift left and overlap previous tab
+            ld a, d
+            dec a
+            or a
+            jr z, _
+            dec d
+            ld a, d
+            dec a
+            push hl
+                ld l, 7
+                ld c, 6
+                pcall(drawVLine)
+            pop hl
+            ; Invert tab
+_:          push de
+            push hl
+                pcall(measureStr)
+                inc a
+                ld c, a
+                ld b, 7
+                ld l, 7
+                ld e, d
+                pcall(rectAND)
+            pop hl
+            pop de
+        pop bc
+        pop af
+.allTabs:
+        ; Shift tab after current tab left
+        push af
+            dec a
+            cp b
+            jr nz, _
+            dec d
+_:      pop af
+        ; Draw text
+        inc d
+        push hl
+            push de
+                ld e, 8
+                pcall(drawStrXOR)
+                dec d
+                ld e, 7
+            pop hl
+            ; H now contains position of start of tab
+            ; Cutoff bottom of other tabs
+            cp b
+            jr z, _
+            ld e, 12
+            ld l, 12
+            pcall(drawLine)
+_:          ; Overlap tab after current tab
+            push af
+                dec a
+                cp b
+                jr nz, _
+                push bc
+                push hl
+                    ld c, 6
+                    ld a, h
+                    ld l, 7
+                    pcall(drawVLine)
+                pop hl
+                pop bc
+_:          pop af
+        pop hl
+        inc d
+
+        ; Advance HL to next tab
+        push af
+_:      inc hl
+            ld a, (hl)
+            or a
+            jr nz, -_
+            inc hl
+        pop af
+        djnz .loop
+    pop hl
+    pop de
+    pop bc
+    pop af
+    ret
+
 castleSprite:
     .db 0b10101000
     .db 0b00000000

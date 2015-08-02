@@ -24,6 +24,7 @@ drawScrollBar .equ 45
 promptString .equ 48
 showMenu .equ 51
 wordWrap .equ 54
+drawTabs .equ 57
 
 ; Character sets
 charSetUppercase .equ 0
