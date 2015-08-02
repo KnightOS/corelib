@@ -32,6 +32,7 @@ jumpTable:
     jp promptString
     jp showMenu
     jp wordWrap
+    jp drawTabs
     .db 0xFF
 
 #include "src/open.asm"
