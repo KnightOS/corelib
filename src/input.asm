@@ -17,6 +17,80 @@ checkKey:
     cp a
     ret
 
+mods:
+    ; bitfield
+    ; 0: shift
+    ; 1: square
+    ; 2: diamond
+    .db 0
+
+; From a TI-keyboard or the like
+handleScanCode:
+    or a
+    ret z
+    cp 0xFF
+    ret z
+    push af
+        cp 0x4F
+        jr nc, .modifier
+        ; Load keymap based on mods
+        ld b, a
+        ild(a, (mods))
+        bit 0, a
+        jr nz, .shift
+        bit 7, b
+        jr nz, .shift
+        ild(hl, ti_keyboard_keymap)
+.find_key:
+        ld a, b
+        dec a
+        cp 0x40
+        jr nc, .not_mapped
+        add a, l \ ld l, a \ jr nc, $+3 \ inc h
+        ld a, (hl)
+    inc sp \ inc sp
+    cp a
+    ret
+.not_mapped:
+    pop af
+    ret
+.shift:
+        ild(hl, ti_keyboard_keymap_shift)
+        ld a, b
+        and 0b01111111
+        ld b, a
+        jr .find_key
+.modifier:
+        cp 0x50
+        jr z, .clearMods
+
+        cp 0x58 ; Square
+        icall(z, launchThreadList)
+
+        cp 0x54 ; Diamond
+        icall(z, launchCastle)
+
+        cp 0x51 ; Left shift
+        jr nz, _
+        ld a, 1
+        ild((mods), a)
+        icall(setCharSet)
+_:      
+        cp 0x52 ; Right shift
+        jr nz, _
+        ld a, 1
+        ild((mods), a)
+        icall(setCharSet)
+_:  pop af
+    or 1
+    ld a, 0
+    ret
+.clearMods:
+        xor a
+        ild((mods), a)
+        icall(setCharSet)
+    jr -_
+
 ;; getCharacterInput [corelib]
 ;;  Gets a key input from the user.
 ;; Outputs:
@@ -29,6 +103,9 @@ checkKey:
 ;;  Also watches for F1/F5 to launch castle/thread list
 getCharacterInput:
     icall(drawCharSetIndicator)
+
+    pcall(getScanCode)
+    ijp(z, handleScanCode)
 
     ld b, 0
     icall(appGetKey)
@@ -151,4 +228,5 @@ getCharSet:
     ild(a, (charSet))
     ret
 
+#include "src/keymap.asm"
 #include "src/characters.asm"
