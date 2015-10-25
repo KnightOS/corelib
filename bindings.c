@@ -63,3 +63,42 @@ void draw_window(SCREEN *screen, const char *title, unsigned char window_flags) 
 	__endasm;
 	screen; title; window_flags;
 }
+
+void prompt_string(SCREEN *screen, char *buffer, unsigned short buffer_length, const char *prompt_string) {
+	__asm
+	POP IX 
+	POP IY ; screen
+	POP IX ; buffer
+	POP BC ; buffer_length
+	POP HL ; prompt_string
+		RST 0x10
+		.db _CORELIB_ID
+		CALL _CORELIB_PROMPTSTRING
+	PUSH HL
+	PUSH BC
+	PUSH IY
+	PUSH IX
+	__endasm;
+	screen; buffer; buffer_length; prompt_string;
+}
+
+void show_message(SCREEN *screen, const char *message, const char *message_list, unsigned char icon) {
+	__asm
+	POP IX 
+	POP IY ; screen
+	POP HL ; message
+	POP DE ; message_list
+	DEC SP
+	POP BC ; icon
+		RST 0x10
+		.db _CORELIB_ID
+		CALL _CORELIB_SHOWMESSAGE
+	PUSH BC
+	INC SP
+	PUSH DE
+	PUSH HL
+	PUSH IY
+	PUSH IX
+	__endasm;
+	screen; message; message_list; icon;
+}
