@@ -1,4 +1,4 @@
-;; showMessage [corelib]
+;; showMessage [GUI]
 ;;  Displays a message box on the screen buffer.
 ;; Inputs:
 ;;  HL: Message text
@@ -116,7 +116,7 @@ _:                      pcall(flushKeys)
     pop hl
     ret
 
-;; showError [corelib]
+;; showError [GUI]
 ;;  Displays a user-friendly error message if appliciable.
 ;; Inputs:
 ;;  A: Error code
@@ -153,7 +153,7 @@ showError_exitEarly:
     pop af
     ret
 
-;; showErrorAndQuit [corelib]
+;; showErrorAndQuit [GUI]
 ;;  Displays a user-friendly error message, if applicable,
 ;;  then quits the current thread.  This function does not
 ;;  return if NZ and if A != 0.

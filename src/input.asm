@@ -1,10 +1,19 @@
-; Same as kernel getKey, but listens for
-; F1 and F5 and acts accordingly
-; Z is reset if the thread lost focus during this call
+;; appGetKey [Input]
+;;  Similar to [getKey](http://www.knightos.org/documentation/reference/input.html#getKey),
+;;  but listens for hotkeys.
+;; Outputs:
+;;  A: Key pressed
+;;  Z: Reset if thread lost focus during this call
 appGetKey:
     pcall(getKey)
     jr checkKey
 
+;; appGetKey [Input]
+;;  Similar to [getKey](http://www.knightos.org/documentation/reference/input.html#getKey),
+;;  but listens for hotkeys.
+;; Outputs:
+;;  A: Key pressed
+;;  Z: Reset if thread lost focus during this call
 appWaitKey:
     pcall(waitKey)
     ;jr checkKey
@@ -17,7 +26,81 @@ checkKey:
     cp a
     ret
 
-;; getCharacterInput [corelib]
+mods:
+    ; bitfield
+    ; 0: shift
+    ; 1: square
+    ; 2: diamond
+    .db 0
+
+; From a TI-keyboard or the like
+handleScanCode:
+    or a
+    ret z
+    cp 0xFF
+    ret z
+    push af
+        cp 0x4F
+        jr nc, .modifier
+        ; Load keymap based on mods
+        ld b, a
+        ild(a, (mods))
+        bit 0, a
+        jr nz, .shift
+        bit 7, b
+        jr nz, .shift
+        ild(hl, ti_keyboard_keymap)
+.find_key:
+        ld a, b
+        dec a
+        cp 0x40
+        jr nc, .not_mapped
+        add a, l \ ld l, a \ jr nc, $+3 \ inc h
+        ld a, (hl)
+    inc sp \ inc sp
+    cp a
+    ret
+.not_mapped:
+    pop af
+    ret
+.shift:
+        ild(hl, ti_keyboard_keymap_shift)
+        ld a, b
+        and 0b01111111
+        ld b, a
+        jr .find_key
+.modifier:
+        cp 0x50
+        jr z, .clearMods
+
+        cp 0x58 ; Square
+        icall(z, launchThreadList)
+
+        cp 0x54 ; Diamond
+        icall(z, launchCastle)
+
+        cp 0x51 ; Left shift
+        jr nz, _
+        ld a, 1
+        ild((mods), a)
+        icall(setCharSet)
+_:      
+        cp 0x52 ; Right shift
+        jr nz, _
+        ld a, 1
+        ild((mods), a)
+        icall(setCharSet)
+_:  pop af
+    or 1
+    ld a, 0
+    ret
+.clearMods:
+        xor a
+        ild((mods), a)
+        icall(setCharSet)
+    jr -_
+
+;; getCharacterInput [Input]
 ;;  Gets a key input from the user.
 ;; Outputs:
 ;;  A: ANSI character
@@ -29,6 +112,9 @@ checkKey:
 ;;  Also watches for F1/F5 to launch castle/thread list
 getCharacterInput:
     icall(drawCharSetIndicator)
+
+    pcall(getScanCode)
+    ijp(z, handleScanCode)
 
     ld b, 0
     icall(appGetKey)
@@ -139,16 +225,33 @@ drawCharSetIndicator:
 charSet:
     .db 0
 
-; Sets the character mapping to A.
-; 0: uppercase \ 1: lowercase \ 2: symbols \ 3: extended
+;; setCharSet [Input]
+;;  Sets the character set used by [[getCharacterInput]].
+;; Inputs:
+;;  A: Charset
+;; Notes:
+;;  * 0: Uppercase letters
+;;  * 1: Lowercase letters
+;;  * 2: Symbols
+;;  * 3: Extended symbols
 setCharSet:
     cp 5
     ret nc ; Only allow 0-3
     ild((charSet), a)
     ret
 
+;; getCharSet [Input]
+;;  Gets the character set used by [[getCharacterInput]].
+;; Inputs:
+;;  A: Charset
+;; Notes:
+;;  * 0: Uppercase letters
+;;  * 1: Lowercase letters
+;;  * 2: Symbols
+;;  * 3: Extended symbols
 getCharSet:
     ild(a, (charSet))
     ret
 
+#include "src/keymap.asm"
 #include "src/characters.asm"

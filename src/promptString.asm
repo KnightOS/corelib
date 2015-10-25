@@ -1,4 +1,4 @@
-;; promptString [corelib]
+;; promptString [GUI]
 ;;  Prompts the user to input a string, and returns that string.
 ;; Inputs:
 ;;  IX: Memory to hold string

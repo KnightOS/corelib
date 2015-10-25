@@ -10,6 +10,10 @@ drawOverlay:
     pcall(rectXOR)
     ret
 
+;; launchCastle [System]
+;;  Switches to the application launcher (/bin/launcher)
+;; Notes:
+;;  This does not return until your thread regains focus.
 launchCastle:
     push af
         pcall(fullScreenWindow)
@@ -24,6 +28,10 @@ launchCastle:
     or a
     ret
 
+;; launchThreadList [System]
+;;  Switches to the thread list (/bin/switcher)
+;; Notes:
+;;  This does not return until your thread regains focus.
 launchThreadList:
     push af
         pcall(fullScreenWindow)

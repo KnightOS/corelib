@@ -1,4 +1,4 @@
-;; open [corelib]
+;; open [System]
 ;;  Opens a file with the associated application.
 ;; Inputs:
 ;;  DE: Path to file

@@ -1,4 +1,4 @@
-;; showMenu [corelib]
+;; showMenu [GUI]
 ;;  Shows a user-specified menu of options.
 ;; Inputs:
 ;;  HL: Pointer to menu descriptor
