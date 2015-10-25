@@ -1,14 +1,17 @@
-;; drawWindow [corelib]
+;; drawWindow [GUI]
 ;;  Draws a window layout on the screen buffer.
 ;; Inputs:
 ;;  IY: Screen buffer
 ;;  HL: Window title text
-;;  A: Flags:
-;;     Bit 0: Set to skip castle graphic
-;;     Bit 1: Set to skip thread list graphic
-;;     Bit 2: Set to draw menu graphic (note the opposite use from others)
+;;  A: Flags
 ;; Notes:
 ;;  Clears the buffer, then draws the standard frame and other items on it
+;; 
+;;  A is a bitfield:
+;; 
+;;  * Bit 0: Set to skip castle graphic
+;;  * Bit 1: Set to skip thread list graphic
+;;  * Bit 2: Set to draw menu graphic (note the opposite use from others)
 drawWindow:
     push de
     push bc
@@ -67,7 +70,7 @@ _:      pop af \ pop hl \ push hl \ push af
     pop de
     ret
 
-;; drawScrollBar
+;; drawScrollBar [GUI]
 ;; Inputs:
 ;;  B: Length of bar in pixels
 ;;  C: Position of top of bar (0-49)
@@ -99,7 +102,7 @@ drawScrollBar:
     pop af
     ret
 
-;; drawTabs
+;; drawTabs [GUI]
 ;;  Draws a tab bar at the top of the window
 ;; Inputs:
 ;;  A: Active tab

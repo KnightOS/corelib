@@ -1,10 +1,19 @@
-; Same as kernel getKey, but listens for
-; F1 and F5 and acts accordingly
-; Z is reset if the thread lost focus during this call
+;; appGetKey [Input]
+;;  Similar to [getKey](http://www.knightos.org/documentation/reference/input.html#getKey),
+;;  but listens for hotkeys.
+;; Outputs:
+;;  A: Key pressed
+;;  Z: Reset if thread lost focus during this call
 appGetKey:
     pcall(getKey)
     jr checkKey
 
+;; appGetKey [Input]
+;;  Similar to [getKey](http://www.knightos.org/documentation/reference/input.html#getKey),
+;;  but listens for hotkeys.
+;; Outputs:
+;;  A: Key pressed
+;;  Z: Reset if thread lost focus during this call
 appWaitKey:
     pcall(waitKey)
     ;jr checkKey
@@ -91,7 +100,7 @@ _:  pop af
         icall(setCharSet)
     jr -_
 
-;; getCharacterInput [corelib]
+;; getCharacterInput [Input]
 ;;  Gets a key input from the user.
 ;; Outputs:
 ;;  A: ANSI character
@@ -216,14 +225,30 @@ drawCharSetIndicator:
 charSet:
     .db 0
 
-; Sets the character mapping to A.
-; 0: uppercase \ 1: lowercase \ 2: symbols \ 3: extended
+;; setCharSet [Input]
+;;  Sets the character set used by [[getCharacterInput]].
+;; Inputs:
+;;  A: Charset
+;; Notes:
+;;  * 0: Uppercase letters
+;;  * 1: Lowercase letters
+;;  * 2: Symbols
+;;  * 3: Extended symbols
 setCharSet:
     cp 5
     ret nc ; Only allow 0-3
     ild((charSet), a)
     ret
 
+;; getCharSet [Input]
+;;  Gets the character set used by [[getCharacterInput]].
+;; Inputs:
+;;  A: Charset
+;; Notes:
+;;  * 0: Uppercase letters
+;;  * 1: Lowercase letters
+;;  * 2: Symbols
+;;  * 3: Extended symbols
 getCharSet:
     ild(a, (charSet))
     ret

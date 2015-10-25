@@ -1,4 +1,4 @@
-;; wordWrap [corelib]
+;; wordWrap [GUI]
 ;;  Similar to the kernel's wrapStr function, but break at words, not characters.
 ;; Inputs:
 ;;  HL: String pointer
