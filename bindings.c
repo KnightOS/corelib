@@ -102,3 +102,43 @@ void show_message(SCREEN *screen, const char *message, const char *message_list,
 	__endasm;
 	screen; message; message_list; icon;
 }
+
+void launch_castle() {
+	__asm
+	RST 0x10
+	.db _CORELIB_ID
+	CALL _CORELIB_LAUNCHCASTLE
+	__endasm;
+}
+
+void launch_threadlist() {
+	__asm
+	POP IX
+	RST 0x10
+	.db _CORELIB_ID
+	CALL _CORELIB_LAUNCHTHREADLIST
+	PUSH IX
+	__endasm;
+}
+
+void show_error(SCREEN *screen) {
+	__asm
+	POP IX
+	RST 0x10
+	.db _CORELIB_ID
+	CALL _CORELIB_SHOWERROR
+	PUSH IX
+	__endasm;
+	screen;
+}
+
+void show_error_and_quit(SCREEN *screen) {
+	__asm
+	POP IX
+	RST 0x10
+	.db _CORELIB_ID
+	CALL _CORELIB_SHOWERRORANDQUIT
+	PUSH IX
+	__endasm;
+	screen;
+}

@@ -66,4 +66,6 @@ char show_menu(SCREEN *screen, const char *menu, unsigned char width);
 #define _CORELIB_WORDWRAP 54
 void draw_string_word_wrap(SCREEN *screen, const char text, unsigned char x, unsigned char y, unsigned char x_max, unsigned char y_max);
 
+#define _CORELIB_DRAWTABS 57
+void draw_tabs(SCREEN *screen, const char *tabs, const char *tab);
 #endif
