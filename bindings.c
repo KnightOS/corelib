@@ -169,9 +169,15 @@ void draw_tabs(SCREEN *screen, const char *tabs, const char *tab) {
 	__asm
 	POP IX
 	POP IY ; screen
-	PUSH HL ; tabs
-	PUSH AF l
-	POP HL
+	POP HL ; tabs
+	DEC SP
+	POP AF ; tab
+	RST 0x10
+	.db _CORELIB_ID
+	CALL _CORELIB_DRAWTABS		
+	PUSH AF
+	INC SP
+	PUSH HL
 	PUSH IY
 	PUSH IX
 	__endasm;
