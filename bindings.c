@@ -183,3 +183,27 @@ void draw_tabs(SCREEN *screen, const char *tabs, const char *tab) {
 	__endasm;
 	screen; tabs; tab;
 }
+
+char show_menu(SCREEN *screen, const char *menu, unsigned char width) {
+	__asm
+	POP IX
+	POP IY ; screen
+	POP HL ; menu
+	POP BC ; width
+	RST 0x10
+	.db _CORELIB_ID
+	CALL _CORELIB_SHOWMENU		
+		PUSH AF
+			LD A, 0
+			JR Z, SHOW_MENU_RETURN
+			INC A
+SHOW_MENU_RETURN:
+			LD (HL), A
+		POP AF			
+	PUSH BC
+	PUSH HL
+	PUSH IY
+	PUSH IX
+	__endasm;
+	screen; menu; width;
+}
