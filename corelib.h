@@ -46,7 +46,7 @@ void launch_threadlist();
 void show_message(SCREEN *screen, const char *message, const char *message_list, unsigned char icon);
 
 #define _CORELIB_SHOWERROR 36
-void show_error(SCREEN *screen);
+void show_error(SCREEN *screen, const char error);
 
 #define _CORELIB_SHOWERRORANDQUIT 39
 void show_error_and_quit(SCREEN *screen);
@@ -58,7 +58,7 @@ unsigned char open_file(const char *path);
 void draw_scrollbar(SCREEN *screen, unsigned char length, unsigned char scroll);
 
 #define _CORELIB_PROMPTSTRING 48
-void prompt_string(SCREEN *screen, char *buffer, unsigned short buffer_length, const char *prompt_string);
+unsigned char prompt_string(SCREEN *screen, char *buffer, unsigned short buffer_length, const char *prompt_string);
 
 #define _CORELIB_SHOWMENU 51
 char show_menu(SCREEN *screen, const char *menu, unsigned char width);

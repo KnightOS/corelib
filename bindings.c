@@ -64,7 +64,7 @@ void draw_window(SCREEN *screen, const char *title, unsigned char window_flags) 
 	screen; title; window_flags;
 }
 
-void prompt_string(SCREEN *screen, char *buffer, unsigned short buffer_length, const char *prompt_string) {
+unsigned char prompt_string(SCREEN *screen, char *buffer, unsigned short buffer_length, const char *prompt_string) {
 	__asm
 	POP IX 
 	POP IY ; screen
@@ -74,6 +74,13 @@ void prompt_string(SCREEN *screen, char *buffer, unsigned short buffer_length, c
 		RST 0x10
 		.db _CORELIB_ID
 		CALL _CORELIB_PROMPTSTRING
+		PUSH AF
+			LD A, 0
+			JR Z, PROMPT_STRING_RETURN
+			INC A
+PROMPT_STRING_RETURN:
+			LD (HL), A
+		POP AF
 	PUSH HL
 	PUSH BC
 	PUSH IY
@@ -121,7 +128,7 @@ void launch_threadlist() {
 	__endasm;
 }
 
-void show_error(SCREEN *screen) {
+void show_error(SCREEN *screen, const char error) {
 	__asm
 	POP IX
 	RST 0x10
@@ -141,4 +148,32 @@ void show_error_and_quit(SCREEN *screen) {
 	PUSH IX
 	__endasm;
 	screen;
+}
+
+void draw_scrollbar(SCREEN *screen, unsigned char length, unsigned char scroll) {
+	__asm
+	POP IX
+	POP IY ; screen
+	POP BC ; length, scroll
+	RST 0x10
+	.db _CORELIB_ID
+	CALL _CORELIB_DRAWSCROLLBAR
+	PUSH BC
+	PUSH IY
+	PUSH IX
+	__endasm;
+	screen; length; scroll;
+}
+
+void draw_tabs(SCREEN *screen, const char *tabs, const char *tab) {
+	__asm
+	POP IX
+	POP IY ; screen
+	PUSH HL ; tabs
+	PUSH AF l
+	POP HL
+	PUSH IY
+	PUSH IX
+	__endasm;
+	screen; tabs; tab;
 }
