@@ -49,7 +49,7 @@ void show_message(SCREEN *screen, const char *message, const char *message_list,
 void show_error(SCREEN *screen, const char error);
 
 #define _CORELIB_SHOWERRORANDQUIT 39
-void show_error_and_quit(SCREEN *screen);
+void show_error_and_quit(SCREEN *screen, const char error);
 
 #define _CORELIB_OPEN 42
 unsigned char open_file(const char *path);
