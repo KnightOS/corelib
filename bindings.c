@@ -48,10 +48,10 @@ APP_WAIT_KEY_KEPT_FOCUS:
 void draw_window(SCREEN *screen, const char *title, unsigned char window_flags) {
 	__asm
 	POP IX
-	POP IY
-	POP HL
+	POP IY ; screen
+	POP HL ; title
 	DEC SP
-	POP AF
+	POP AF ; window_flags
 		RST 0x10
 		.db _CORELIB_ID
 		CALL _CORELIB_DRAWWINDOW
@@ -206,4 +206,25 @@ SHOW_MENU_RETURN:
 	PUSH IX
 	__endasm;
 	screen; menu; width;
+}
+
+
+void draw_string_word_wrap(SCREEN *screen, const char *text, unsigned char x, unsigned char y, unsigned char x_max, unsigned char y_max) {
+	__asm
+	POP IX
+	POP IY ; screen
+	POP HL ; text
+	POP DE ; x,y
+	POP BC ; x_max, y_max
+	RST 0x10
+	.db _CORELIB_ID
+	CALL _CORELIB_WORDWRAP
+	
+	PUSH BC
+	PUSH DE
+	PUSH HL
+	PUSH IY
+	PUSH IX
+	__endasm;
+	screen; text; x; y; x_max; y_max;
 }
