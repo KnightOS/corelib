@@ -1,6 +1,5 @@
 #include "corelib.h"
 #include <knightos/display.h>
-
 unsigned char app_get_key(unsigned char *lost_focus) __naked {
 	__asm
 	POP IX
@@ -128,7 +127,7 @@ void launch_threadlist() {
 	__endasm;
 }
 
-void show_error(SCREEN *screen, const char error) {
+void show_error(SCREEN *screen, CORELIB_ERROR error) {
 	__asm
 	POP IX
 	POP IY ; screen
@@ -145,7 +144,7 @@ void show_error(SCREEN *screen, const char error) {
 	screen;
 }
 
-void show_error_and_quit(SCREEN *screen, const char error) {
+void show_error_and_quit(SCREEN *screen, CORELIB_ERROR error) {
 	__asm
 	POP IX
 	POP IY ; screen

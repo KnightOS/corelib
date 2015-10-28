@@ -15,6 +15,26 @@
 #define WIN_SKIP_THREADLIST 2
 #define WIN_SHOW_MENU 4
 
+typedef enum {
+    ERR_OUT_OF_MEM = 1,
+    ERR_TOO_MANY_THREADS = 2,
+    ERR_STREAM_NOT_FOUND = 3,
+    ERR_END_OF_STREAM = 4,
+    ERR_FILE_NOT_FOUND = 5,
+    ERR_TOO_MANY_STREAMS = 6,
+    ERR_NO_SUCH_THREAD = 7,
+    ERR_TOO_MANY_LIBRARIES = 8,
+    ERR_UNSUPPORTED = 9,
+    ERR_TOO_MANY_SIGNALS = 10,
+    ERR_FILE_SYSTEM_FULL = 11,
+    ERR_NAME_TOO_LONG = 12,
+    ERR_ALREADY_EXISTS = 13,
+    ERR_NO_MAGIC = 14,
+    ERR_NO_HEADER = 15,
+    ERR_NO_ENTRY_POINT = 16,
+    ERR_KERNEL_MISMATCH = 17
+} CORELIB_ERROR;
+
 #define _CORELIB_APPGETKEY 6
 unsigned char app_get_key(unsigned char *lost_focus);
 
@@ -46,10 +66,10 @@ void launch_threadlist();
 void show_message(SCREEN *screen, const char *message, const char *message_list, unsigned char icon);
 
 #define _CORELIB_SHOWERROR 36
-void show_error(SCREEN *screen, const char error);
+void show_error(SCREEN *screen, CORELIB_ERROR error);
 
 #define _CORELIB_SHOWERRORANDQUIT 39
-void show_error_and_quit(SCREEN *screen, const char error);
+void show_error_and_quit(SCREEN *screen, CORELIB_ERROR error);
 
 #define _CORELIB_OPEN 42
 unsigned char open_file(const char *path);
@@ -68,4 +88,6 @@ void draw_string_word_wrap(SCREEN *screen, const char *text, unsigned char x, un
 
 #define _CORELIB_DRAWTABS 57
 void draw_tabs(SCREEN *screen, const char *tabs, const char *tab);
+
+
 #endif
