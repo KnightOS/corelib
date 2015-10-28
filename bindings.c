@@ -1,6 +1,5 @@
 #include "corelib.h"
 #include <knightos/display.h>
-#include "stdbool.h"
 unsigned char app_get_key(unsigned char *lost_focus) __naked {
 	__asm
 	POP IX
