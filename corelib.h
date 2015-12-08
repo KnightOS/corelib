@@ -47,10 +47,10 @@ void launch_threadlist();
 void show_message(SCREEN *screen, const char *message, const char *message_list, unsigned char icon);
 
 #define _CORELIB_SHOWERROR 36
-void show_error(SCREEN *screen, KERNEL_ERROR error);
+void show_error(SCREEN *screen, int errno);
 
 #define _CORELIB_SHOWERRORANDQUIT 39
-void show_error_and_quit(SCREEN *screen, KERNEL_ERROR error);
+void show_error_and_quit(SCREEN *screen, int errno);
 
 #define _CORELIB_OPEN 42
 unsigned char open_file(const char *path);

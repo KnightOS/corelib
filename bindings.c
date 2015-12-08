@@ -129,12 +129,12 @@ void launch_threadlist() {
 	__endasm;
 }
 
-void show_error(SCREEN *screen, KERNEL_ERROR error) {
+void show_error(SCREEN *screen, int errno) {
 	__asm
 	POP IX
 	POP IY ; screen
 	DEC SP
-	POP AF ; error
+	POP AF ; errorno
 	RST 0x10
 	.db _CORELIB_ID
 	CALL _CORELIB_SHOWERROR
@@ -146,12 +146,12 @@ void show_error(SCREEN *screen, KERNEL_ERROR error) {
 	screen;
 }
 
-void show_error_and_quit(SCREEN *screen, KERNEL_ERROR error) {
+void show_error_and_quit(SCREEN *screen, int errno) {
 	__asm
 	POP IX
 	POP IY ; screen
 	DEC SP
-	POP AF ; error
+	POP AF ; errorno
 	RST 0x10
 	.db _CORELIB_ID
 	CALL _CORELIB_SHOWERRORANDQUIT
