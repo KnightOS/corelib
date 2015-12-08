@@ -1,5 +1,7 @@
 #include "corelib.h"
 #include <knightos/display.h>
+#include <errno.h>
+
 unsigned char app_get_key(unsigned char *lost_focus) __naked {
 	__asm
 	POP IX
@@ -127,12 +129,12 @@ void launch_threadlist() {
 	__endasm;
 }
 
-void show_error(SCREEN *screen, CORELIB_ERROR error) {
+void show_error(SCREEN *screen, int errno) {
 	__asm
 	POP IX
 	POP IY ; screen
 	DEC SP
-	POP AF ; error
+	POP AF ; errorno
 	RST 0x10
 	.db _CORELIB_ID
 	CALL _CORELIB_SHOWERROR
@@ -144,12 +146,12 @@ void show_error(SCREEN *screen, CORELIB_ERROR error) {
 	screen;
 }
 
-void show_error_and_quit(SCREEN *screen, CORELIB_ERROR error) {
+void show_error_and_quit(SCREEN *screen, int errno) {
 	__asm
 	POP IX
 	POP IY ; screen
 	DEC SP
-	POP AF ; error
+	POP AF ; errorno
 	RST 0x10
 	.db _CORELIB_ID
 	CALL _CORELIB_SHOWERRORANDQUIT
