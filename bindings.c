@@ -68,23 +68,19 @@ void draw_window(SCREEN *screen, const char *title, unsigned char window_flags) 
 unsigned char prompt_string(SCREEN *screen, char *buffer, unsigned short buffer_length, const char *prompt_string) __naked {
 	__asm
 	POP DE 
-	POP AF 
-	POP IX 
-	POP BC 
-	POP HL 
-	PUSH HL 
-	PUSH BC 
+	EX (SP), IY
+	POP IX
+	POP BC
+	POP HL
+		RST 0x10
+		.DB __CORELIB_ID
+		CALL _CORELIB_PROMPTSTRING
+	PUSH HL
+	PUSH BC
 	PUSH IX
-	PUSH AF 
-	PUSH IY
-	PUSH AF
-	POP IY 
-	RST 0x10 
-	.DB _CORELIB_ID 
-	CALL _CORELIB_PROMPTSTRING 
+	EX (SP), IY
+	PUSH DE
 	LD L, A 
-	POP IY 
-	PUSH DE 
 	RET
 	__endasm;
 	screen; buffer; buffer_length; prompt_string;
