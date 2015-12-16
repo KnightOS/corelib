@@ -65,47 +65,45 @@ void draw_window(SCREEN *screen, const char *title, unsigned char window_flags) 
 	screen; title; window_flags;
 }
 
-unsigned char prompt_string(SCREEN *screen, char *buffer, unsigned short buffer_length, const char *prompt_string) __naked {
+unsigned char prompt_string(SCREEN *screen, char *buffer, unsigned short buffer_length, const char *prompt_string) {
 	__asm
 	POP DE
- 	POP IY
- 	POP AF
- 	POP BC
- 	POP HL
- 	PUSH HL
- 	PUSH BC
- 	PUSH AF
- 	EX (SP), IX
-	RST 0x10
-	.DB _CORELIB_ID
-	CALL _CORELIB_PROMPTSTRING
-	LD L,A
+	POP IY ; screen
+	POP AF ; buffer
+	POP BC ; buffer_length
+	POP HL ; prompt_string
+	PUSH HL
+	PUSH BC
+	PUSH AF
+	EX (SP), IX
+		RST 0x10
+		.DB __CORELIB_ID
+		CALL _CORELIB_PROMPTSTRING
 	EX (SP), IX
 	PUSH IY
 	PUSH DE
-	RET
-
+	LD L, A
 	__endasm;
 	screen; buffer; buffer_length; prompt_string;
 }
 
-void show_message(SCREEN *screen, const char *message, const char *message_list, unsigned char icon) {
+unsigned char show_message(SCREEN *screen, const char *message, const char *message_list, unsigned char icon) {
 	__asm
-	POP DE 
+	POP AF
 	POP IY ; screen
 	POP HL ; message
 	POP DE ; message_list
-	DEC SP
 	POP BC ; icon
-		RST 0x10
-		.db _CORELIB_ID
-		CALL _CORELIB_SHOWMESSAGE
 	PUSH BC
-	INC SP
 	PUSH DE
 	PUSH HL
 	PUSH IY
-	PUSH DE
+	PUSH AF
+	LD B, C
+		RST 0x10
+		.db _CORELIB_ID
+		CALL _CORELIB_SHOWMESSAGE
+	LD L, A
 	__endasm;
 	screen; message; message_list; icon;
 }
