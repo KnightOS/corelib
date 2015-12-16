@@ -4,7 +4,7 @@
 
 unsigned char app_get_key(unsigned char *lost_focus) __naked {
 	__asm
-	POP IX
+	POP DE
 	POP HL
 		RST 0x10
 		.db _CORELIB_ID
@@ -17,7 +17,7 @@ APP_GET_KEY_KEPT_FOCUS:
 			LD (HL), A
 		POP AF
 	PUSH HL
-	PUSH IX
+	PUSH DE
 	LD L, A
 	RET
 	__endasm;
@@ -26,7 +26,7 @@ APP_GET_KEY_KEPT_FOCUS:
 
 unsigned char app_wait_key(unsigned char *lost_focus) __naked {
 	__asm
-	POP IX
+	POP DE
 	POP HL
 		RST 0x10
 		.db _CORELIB_ID
@@ -39,7 +39,7 @@ APP_WAIT_KEY_KEPT_FOCUS:
 			LD (HL), A
 		POP AF
 	PUSH HL
-	PUSH IX
+	PUSH DE
 	LD L, A
 	RET
 	__endasm;
@@ -48,7 +48,7 @@ APP_WAIT_KEY_KEPT_FOCUS:
  
 void draw_window(SCREEN *screen, const char *title, unsigned char window_flags) {
 	__asm
-	POP IX
+	POP DE
 	POP IY ; screen
 	POP HL ; title
 	DEC SP
@@ -60,39 +60,35 @@ void draw_window(SCREEN *screen, const char *title, unsigned char window_flags) 
 	INC SP
 	PUSH HL
 	PUSH IY
-	PUSH IX
+	PUSH DE
 	__endasm;
 	screen; title; window_flags;
 }
 
-unsigned char prompt_string(SCREEN *screen, char *buffer, unsigned short buffer_length, const char *prompt_string) {
+unsigned char prompt_string(SCREEN *screen, char *buffer, unsigned short buffer_length, const char *prompt_string) __naked {
 	__asm
-	POP IX 
-	POP IY ; screen
-	POP IX ; buffer
-	POP BC ; buffer_length
-	POP HL ; prompt_string
+	POP DE 
+	EX (SP), IY
+	POP IX
+	POP BC
+	POP HL
 		RST 0x10
-		.db _CORELIB_ID
+		.DB __CORELIB_ID
 		CALL _CORELIB_PROMPTSTRING
-		PUSH AF
-			LD A, 0
-			JR Z, PROMPT_STRING_RETURN
-			INC A
-PROMPT_STRING_RETURN:
-			LD (HL), A
-		POP AF
 	PUSH HL
 	PUSH BC
-	PUSH IY
 	PUSH IX
+	EX (SP), IY
+	PUSH DE
+	LD L, A 
+	RET
 	__endasm;
 	screen; buffer; buffer_length; prompt_string;
 }
 
 void show_message(SCREEN *screen, const char *message, const char *message_list, unsigned char icon) {
 	__asm
-	POP IX 
+	POP DE 
 	POP IY ; screen
 	POP HL ; message
 	POP DE ; message_list
@@ -106,7 +102,7 @@ void show_message(SCREEN *screen, const char *message, const char *message_list,
 	PUSH DE
 	PUSH HL
 	PUSH IY
-	PUSH IX
+	PUSH DE
 	__endasm;
 	screen; message; message_list; icon;
 }
@@ -121,17 +117,17 @@ void launch_castle() {
 
 void launch_threadlist() {
 	__asm
-	POP IX
+	POP DE
 	RST 0x10
 	.db _CORELIB_ID
 	CALL _CORELIB_LAUNCHTHREADLIST
-	PUSH IX
+	PUSH DE
 	__endasm;
 }
 
 void show_error(SCREEN *screen, int errno) {
 	__asm
-	POP IX
+	POP DE
 	POP IY ; screen
 	DEC SP
 	POP AF ; errorno
@@ -141,14 +137,14 @@ void show_error(SCREEN *screen, int errno) {
 	PUSH AF
 	INC SP
 	PUSH IY
-	PUSH IX
+	PUSH DE
 	__endasm;
 	screen;
 }
 
 void show_error_and_quit(SCREEN *screen, int errno) {
 	__asm
-	POP IX
+	POP DE
 	POP IY ; screen
 	DEC SP
 	POP AF ; errorno
@@ -158,14 +154,14 @@ void show_error_and_quit(SCREEN *screen, int errno) {
 	PUSH AF
 	INC SP
 	PUSH IY
-	PUSH IX
+	PUSH DE
 	__endasm;
 	screen;
 }
 
 void draw_scrollbar(SCREEN *screen, unsigned char length, unsigned char scroll) {
 	__asm
-	POP IX
+	POP DE
 	POP IY ; screen
 	POP BC ; length, scroll
 	RST 0x10
@@ -173,14 +169,14 @@ void draw_scrollbar(SCREEN *screen, unsigned char length, unsigned char scroll) 
 	CALL _CORELIB_DRAWSCROLLBAR
 	PUSH BC
 	PUSH IY
-	PUSH IX
+	PUSH DE
 	__endasm;
 	screen; length; scroll;
 }
 
 void draw_tabs(SCREEN *screen, const char *tabs, const char *tab) {
 	__asm
-	POP IX
+	POP DE
 	POP IY ; screen
 	POP HL ; tabs
 	DEC SP
@@ -192,14 +188,14 @@ void draw_tabs(SCREEN *screen, const char *tabs, const char *tab) {
 	INC SP
 	PUSH HL
 	PUSH IY
-	PUSH IX
+	PUSH DE
 	__endasm;
 	screen; tabs; tab;
 }
 
 char show_menu(SCREEN *screen, const char *menu, unsigned char width) {
 	__asm
-	POP IX
+	POP DE
 	POP IY ; screen
 	POP HL ; menu
 	POP BC ; width
@@ -216,7 +212,7 @@ SHOW_MENU_RETURN:
 	PUSH BC
 	PUSH HL
 	PUSH IY
-	PUSH IX
+	PUSH DE
 	__endasm;
 	screen; menu; width;
 }
