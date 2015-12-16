@@ -44,7 +44,7 @@ void launch_castle();
 void launch_threadlist();
 
 #define _CORELIB_SHOWMESSAGE 33
-void show_message(SCREEN *screen, const char *message, const char *message_list, unsigned char icon);
+unsigned char show_message(SCREEN *screen, const char *message, const char *message_list, unsigned char icon);
 
 #define _CORELIB_SHOWERROR 36
 void show_error(SCREEN *screen, int errno);
