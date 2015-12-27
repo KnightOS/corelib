@@ -8,8 +8,8 @@ appGetKey:
     pcall(getKey)
     jr checkKey
 
-;; appGetKey [Input]
-;;  Similar to [getKey](http://www.knightos.org/documentation/reference/input.html#getKey),
+;; appWaitKey [Input]
+;;  Similar to [waitKet](http://www.knightos.org/documentation/reference/input.html#waitKey),
 ;;  but listens for hotkeys.
 ;; Outputs:
 ;;  A: Key pressed
@@ -242,7 +242,7 @@ setCharSet:
 
 ;; getCharSet [Input]
 ;;  Gets the character set used by [[getCharacterInput]].
-;; Inputs:
+;; Outputs:
 ;;  A: Charset
 ;; Notes:
 ;;  * 0: Uppercase letters

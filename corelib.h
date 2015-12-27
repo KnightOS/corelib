@@ -2,6 +2,7 @@
 #define _CORELIB_H
 #include <knightos/display.h>
 #include <errno.h>
+#include <stdbool.h>
 
 #define _CORELIB_ID 0x02
 
@@ -26,7 +27,7 @@ unsigned char app_wait_key(unsigned char *lost_focus);
 void draw_window(SCREEN *screen, const char *title, unsigned char flags);
 
 #define _CORELIB_GETCHARACTERINPUT 15
-char get_character_input(SCREEN *screen, unsigned char *raw_key);
+char get_character_input(unsigned char *raw_key);
 
 #define _CORELIB_DRAWCHARSETINDICATOR 18
 void draw_charset_indicator();
@@ -53,13 +54,13 @@ void show_error(SCREEN *screen, int errno);
 void show_error_and_quit(SCREEN *screen, int errno);
 
 #define _CORELIB_OPEN 42
-unsigned char open_file(const char *path);
+bool open_file(const char *path);
 
 #define _CORELIB_DRAWSCROLLBAR 45
 void draw_scrollbar(SCREEN *screen, unsigned char length, unsigned char scroll);
 
 #define _CORELIB_PROMPTSTRING 48
-unsigned char prompt_string(SCREEN *screen, char *buffer, unsigned short buffer_length, const char *prompt_string);
+bool prompt_string(SCREEN *screen, unsigned short buffer_length, const char *prompt_string, char *buffer);
 
 #define _CORELIB_SHOWMENU 51
 char show_menu(SCREEN *screen, const char *menu, unsigned char width);
