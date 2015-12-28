@@ -1,6 +1,7 @@
 #include "corelib.h"
 #include <knightos/display.h>
 #include <errno.h>
+#include <stdbool.h>
 
 unsigned char app_get_key(unsigned char *lost_focus) __naked {
 	__asm
@@ -65,26 +66,24 @@ void draw_window(SCREEN *screen, const char *title, unsigned char window_flags) 
 	screen; title; window_flags;
 }
 
-unsigned char prompt_string(SCREEN *screen, char *buffer, unsigned short buffer_length, const char *prompt_string) {
+bool prompt_string(SCREEN *screen, unsigned short buffer_length, const char *prompt_string, char *buffer) {
 	__asm
-	POP DE
+	POP DE ; return address
 	POP IY ; screen
-	POP AF ; buffer
-	POP BC ; buffer_length
+	POP BC ; length
 	POP HL ; prompt_string
+	POP IX ; buffer
+		RST 0x10
+		.db _CORELIB_ID
+		CALL _CORELIB_PROMPTSTRING
+		LD L, A ; boolean
+	PUSH IX
 	PUSH HL
 	PUSH BC
-	PUSH AF
-	EX (SP), IX
-		RST 0x10
-		.DB __CORELIB_ID
-		CALL _CORELIB_PROMPTSTRING
-	EX (SP), IX
 	PUSH IY
 	PUSH DE
-	LD L, A
 	__endasm;
-	screen; buffer; buffer_length; prompt_string;
+	screen; buffer_length; prompt_string; buffer;
 }
 
 unsigned char show_message(SCREEN *screen, const char *message, const char *message_list, unsigned char icon) {
@@ -218,3 +217,80 @@ SHOW_MENU_RETURN:
 	screen; menu; width;
 }
 
+bool open_file(const char *path) {
+	__asm
+	POP HL ; Return point
+	POP DE ; path
+	RST 0x10
+	.db _CORELIB_ID
+	CALL _CORELIB_OPEN
+	PUSH DE ; restore path
+	LD L, 0
+	JR Z, .error
+	INC L
+.error:
+	JP (HL)
+	__endasm;
+	path; 
+}
+
+char get_character_input(unsigned char *raw_key) __naked {
+	__asm
+	POP DE
+	POP HL
+		RST 0x10
+		.db _CORELIB_ID
+		CALL _CORELIB_GETCHARACTERINPUT
+		PUSH AF
+		PUSH BC
+			LD (HL), B ; raw keypress
+		POP BC
+		POP AF
+	PUSH HL
+	PUSH DE
+	LD L, A ; ansii character
+	RET
+	__endasm;
+	raw_key;
+}
+
+
+void draw_charset_indicator() {
+	__asm
+	POP DE ; return address
+		RST 0x10
+		.db _CORELIB_ID
+		CALL _CORELIB_DRAWCHARSETINDICATOR	
+	PUSH DE
+	__endasm;
+}
+
+void set_charset(unsigned char charset) {
+	__asm
+	POP DE ; return address
+	DEC SP
+	POP AF ; charset
+		RST 0x10
+		.db _CORELIB_ID
+		CALL _CORELIB_SETCHARSET	
+	PUSH AF
+	INC SP
+	PUSH DE
+	__endasm;
+	charset;
+
+}
+
+unsigned char get_charset() {
+	__asm
+	POP DE ; return address
+	DEC SP
+		RST 0x10
+		.db _CORELIB_ID
+		CALL _CORELIB_GETCHARSET	
+		LD L, A
+	INC SP
+	PUSH DE
+	__endasm;
+
+}
