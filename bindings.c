@@ -76,7 +76,6 @@ bool prompt_string(SCREEN *screen, unsigned short buffer_length, const char *pro
 		RST 0x10
 		.db _CORELIB_ID
 		CALL _CORELIB_PROMPTSTRING
-		LD (HL), IX ; input
 		LD L, A ; boolean
 	PUSH IX
 	PUSH HL
@@ -234,7 +233,7 @@ bool open_file(const char *path) {
 	__endasm;
 	path; 
 }
-/** TODO: ANSI? **/
+
 char get_character_input(unsigned char *raw_key) __naked {
 	__asm
 	POP DE
