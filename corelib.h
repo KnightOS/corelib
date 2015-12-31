@@ -12,7 +12,7 @@
 #define CHARSET_EXTENDED 3
 #define CHARSET_HEX 4
 
-/** Presets for draw_window **/
+/** Flags for draw_window **/
 #define WIN_DEFAULTS 0
 #define WIN_SKIP_LAUNCHER 1
 #define WIN_SKIP_THREADLIST 2
@@ -33,11 +33,6 @@ unsigned char app_wait_key(unsigned char *lost_focus);
 
 /**
 * Draws the corelib window.
-* Note: flags is a bit
-* 0x0: Set to skip castle graphic
-* 0x1: Set to skip thread list graphic
-* 0x2: Set to draw menu graphic (note the opposite use from others)
-* You can use WIN_DEFAULTS, WIN_SKIP_LAUNCHER, WIN_SKIP_THREADLIST, and WIN_SHOW_MENU, all of which are defined at the top of this file.
 **/
 #define _CORELIB_DRAWWINDOW 12
 void draw_window(SCREEN *screen, const char *title, unsigned char flags);
